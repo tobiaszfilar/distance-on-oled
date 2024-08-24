@@ -16,7 +16,7 @@ use esp_hal::{
     system::SystemControl,
     timer::timg::TimerGroup,
 };
-use esp_hal_embassy::{init, Executor};
+use esp_hal_embassy::Executor;
 use ssd1306::{prelude::*, size::DisplaySize128x64, I2CDisplayInterface, Ssd1306};
 use static_cell::StaticCell;
 
@@ -72,21 +72,17 @@ async fn display_distance(i2c_per: I2C0, sda: Gpio4, scl: Gpio5, clocks: Clocks<
 
 #[entry]
 fn main() -> ! {
+    /* esp init */
     let peripherals = Peripherals::take();
     let system = SystemControl::new(peripherals.SYSTEM);
-
     let clocks = ClockControl::max(system.clock_control).freeze();
-
     let timer_driver = TimerGroup::new_async(peripherals.TIMG0, &clocks);
-
-    init(&clocks, timer_driver);
-
-    let executor = EXECUTOR.init(Executor::new());
-
+    let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
     esp_println::logger::init_logger_from_env();
 
-    let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
-
+    /*embassy init */
+    esp_hal_embassy::init(&clocks, timer_driver);
+    let executor = EXECUTOR.init(Executor::new());
     executor.run(|spawner| {
         spawner
             .spawn(calculate_distance(
