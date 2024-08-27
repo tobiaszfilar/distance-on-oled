@@ -60,13 +60,9 @@ async fn display_distance(i2c_per: I2C0, sda: Gpio4, scl: Gpio5, clocks: Clocks<
     let mut distance = DISTANCE.load(Ordering::Relaxed);
     write!(display, "Distance = {}", distance).unwrap();
     loop {
-        let distance_new = DISTANCE.load(Ordering::Relaxed);
-        if distance_new != distance {
-            //do i really need it?
-            display.clear().unwrap();
-            write!(display, "\nDistance = {}", distance_new).unwrap();
-            distance = distance_new;
-        }
+        distance = DISTANCE.load(Ordering::Relaxed);
+        display.clear().unwrap();
+        write!(display, "\nDistance = {}", distance).unwrap();
         Timer::after(Duration::from_millis(100)).await;
     }
 }
