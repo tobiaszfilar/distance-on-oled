@@ -48,7 +48,7 @@ This project uses an ESP32C6 microcontroller to measure the distance to an objec
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/esp32c6-distance-measurement.git
+    git clone https://github.com/tobiaszfilar/distance-on-oled.git
     cd esp32c6-distance-measurement
     ```
 
